@@ -1,3 +1,5 @@
+# Backtest: Weighted Sentiment Dominance
+
 ## Hypothesis
 
 - Sentiment increasing + momentum picking up → Follow the momentum

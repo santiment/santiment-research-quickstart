@@ -52,6 +52,9 @@ print(df.head())
     *   `06_get_available_metrics.py`: Discovery of available metrics for specific assets.
 *   **`examples/notebooks/`**: Interactive Jupyter Notebooks.
     *   `client_demo_notebook.ipynb`: Comprehensive walkthrough from data validation to alpha discovery.
+*   **`case-studies/`**: In-depth research reports and anomaly detection studies.
+    *   `research_reports.md`: Index of Santiment research reports.
+*   **`metrics-correlation/`**: Analysis of correlations between different metrics (e.g., social metrics vs price).
 
 ## Documentation
 
