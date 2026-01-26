@@ -10,12 +10,6 @@ You can install the required packages using pip:
 pip install -r requirements.txt
 ```
 
-Or install manually (including visualization libraries):
-
-```bash
-pip install sanpy pandas matplotlib seaborn
-```
-
 ## Configuration
 
 To access full historical data and advanced metrics, a Santiment API key is required.
@@ -50,11 +44,15 @@ print(df.head())
     *   `04_get_dev_activity.py`: Tracking project development activity.
     *   `05_get_many_assets.py`: Efficient batch processing for multiple assets.
     *   `06_get_available_metrics.py`: Discovery of available metrics for specific assets.
+    *   `07_generate_correlation_matrix.py`: Generates correlation matrices between price and social metrics using log-returns.
 *   **`examples/notebooks/`**: Interactive Jupyter Notebooks.
     *   `client_demo_notebook.ipynb`: Comprehensive walkthrough from data validation to alpha discovery.
 *   **`case-studies/`**: In-depth research reports and anomaly detection studies.
     *   `research_reports.md`: Index of Santiment research reports.
-*   **`metrics-correlation/`**: Analysis of correlations between different metrics (e.g., social metrics vs price).
+    *   `backtest_weighted_sentiment_dominance.md`: Backtesting strategy based on weighted sentiment.
+    *   `data-anomaly-evaluation/`: Statistical evaluation of data anomalies.
+*   **`metrics-correlation/`**: Analysis of correlations between different metrics.
+    *   `social-metrics/`: Analysis of correlation between price changes and social metrics (Volume, Dominance, Sentiment).
 
 ## Documentation
 
