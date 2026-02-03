@@ -57,4 +57,4 @@ print(df.head())
 ## Documentation
 
 *   [Official SanPy Documentation](https://github.com/santiment/sanpy)
-*   [Available Metrics Catalog](https://api.santiment.net/)
+*   [Available Metrics Catalog](https://academy.santiment.net/metrics/)
