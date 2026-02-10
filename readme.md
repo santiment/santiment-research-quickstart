@@ -53,6 +53,8 @@ print(df.head())
     *   `data-anomaly-evaluation/`: Statistical evaluation of data anomalies.
 *   **`metrics-correlation/`**: Analysis of correlations between different metrics.
     *   `social-metrics/`: Analysis of correlation between price changes and social metrics (Volume, Dominance, Sentiment).
+*   **`skills/`**: Skills for AI agents to interact with the Santiment API.
+    *   `santiment-api/`: Skill for querying and fetching cryptocurrency data using `sanpy`.
 
 ## Documentation
 
