@@ -1,6 +1,27 @@
 # Santiment Research Quickstart
 
-Welcome to the **Santiment Research Quickstart**. This repository provides concise examples and best practices for using `sanpy`, the official Python client for Santiment's comprehensive crypto financial, social, and on-chain data.
+Welcome to the **Santiment Research Quickstart**. While this repository provides concise examples and best practices for using `sanpy`, its **primary feature** is the integration of AI Skills for seamless data retrieval.
+
+## AI Agent Skills
+
+This repository comes equipped with specialized skills to help AI agents interact with the Santiment API effectively.
+
+### Available Skills
+
+*   **`santiment-api`**: The core skill for querying cryptocurrency and blockchain data.
+    *   **Capabilities**: Fetching price data, on-chain metrics (DAA, MVRV), social metrics (Volume, Sentiment), and development activity.
+    *   **Usage**: Agents can invoke this skill to execute complex data queries without manual script composition.
+    *   **Location**: [`skills/santiment-api/`](skills/santiment-api/)
+
+## 💡 How to Use
+
+Simply clone the repository to your local machine and interact with the Agent using natural language.
+
+```bash
+git clone https://github.com/santiment/santiment-research-quickstart.git
+```
+
+Then, just tell the Agent: **"Install the santiment-api skill for me"**
 
 ## Installation
 
@@ -22,7 +43,7 @@ import san
 san.ApiConfig.api_key = "YOUR_API_KEY_HERE"
 ```
 
-## Quick Start
+## Quick Start (Manual Usage)
 
 Fetch the daily price of Bitcoin:
 
@@ -37,6 +58,7 @@ print(df.head())
 
 ## Repository Structure
 
+*   **`skills/`**: **(Core)** Skills for AI agents to interact with the Santiment API.
 *   **`examples/`**: Scripts demonstrating key data fetching capabilities.
     *   `01_get_price_data.py`: Basic OHLCV price data fetching.
     *   `02_get_onchain_metrics.py`: On-chain metrics like MVRV and Daily Active Addresses.
@@ -53,8 +75,6 @@ print(df.head())
     *   `data-anomaly-evaluation/`: Statistical evaluation of data anomalies.
 *   **`metrics-correlation/`**: Analysis of correlations between different metrics.
     *   `social-metrics/`: Analysis of correlation between price changes and social metrics (Volume, Dominance, Sentiment).
-*   **`skills/`**: Skills for AI agents to interact with the Santiment API.
-    *   `santiment-api/`: Skill for querying and fetching cryptocurrency data using `sanpy`.
 
 ## Documentation
 
