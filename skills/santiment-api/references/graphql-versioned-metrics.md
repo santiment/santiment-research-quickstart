@@ -1,0 +1,129 @@
+# Santiment GraphQL Versioned Metrics
+
+Use this reference when a task explicitly requires metric versions such as `version: "2.0"`.
+
+## When to Use
+
+Use GraphQL versioned queries when:
+
+- the user explicitly asks for `v2`, `2.0`, or a specific metric version
+- the metric has multiple available versions
+- you need to confirm which version is exposed before fetching data
+
+Do not rely on `san.get(..., version="2.0")` for strict versioned access. Prefer `san.graphql.execute_gql(...)`.
+
+## Core Rule
+
+Put `version: "2.0"` on `getMetric(...)`, not on `timeseriesData(...)`.
+
+```python
+import san
+
+result = san.graphql.execute_gql("""
+{
+  getMetric(metric: "social_dominance_total", version: "2.0") {
+    timeseriesData(
+      slug: "bitcoin"
+      from: "utc_now-30d"
+      to: "utc_now"
+      interval: "1d"
+    ) {
+      datetime
+      value
+    }
+  }
+}
+""")
+```
+
+## Check Available Versions First
+
+```python
+import san
+
+meta = san.graphql.execute_gql("""
+{
+  getMetric(metric: "social_volume_total") {
+    metadata {
+      availableVersions { version }
+      internalMetric
+    }
+  }
+}
+""")
+
+print(meta["getMetric"]["metadata"])
+```
+
+Typical response shape:
+
+```python
+{
+    "availableVersions": [{"version": "1.0"}, {"version": "2.0"}],
+    "internalMetric": "social_volume"
+}
+```
+
+## Social Metrics v2.0 Examples
+
+### Social Volume Total v2
+
+```python
+import san
+
+result = san.graphql.execute_gql("""
+{
+  getMetric(metric: "social_volume_total", version: "2.0") {
+    timeseriesData(
+      slug: "bitcoin"
+      from: "utc_now-30d"
+      to: "utc_now"
+      interval: "1d"
+    ) {
+      datetime
+      value
+    }
+  }
+}
+""")
+```
+
+### Social Dominance Total v2
+
+```python
+import san
+
+result = san.graphql.execute_gql("""
+{
+  getMetric(metric: "social_dominance_total", version: "2.0") {
+    timeseriesData(
+      slug: "bitcoin"
+      from: "utc_now-30d"
+      to: "utc_now"
+      interval: "1d"
+    ) {
+      datetime
+      value
+    }
+  }
+}
+""")
+```
+
+## Naming Rules
+
+- Use client-facing metric names like `social_volume_total` and `social_dominance_total`.
+- Do not use internal names like `social_dominance_v2` in `getMetric(...)`.
+- Do not use slash-style names like `social_dominance_v2/2.0`.
+
+Common mapping:
+
+- `social_dominance_total` -> internal `social_dominance_v2`
+- `social_dominance_total_1h_moving_average` -> internal `social_dominance_1h`
+- `social_dominance_total_24h_moving_average` -> internal `social_dominance_24h`
+
+## Practical Notes
+
+- Validate `availableVersions` when version separation matters.
+- Some custom text-query paths can still produce similar v1 and v2 results; verify if the distinction is important to the task.
+- Use `interval="1d"` by default unless the task explicitly needs intraday data.

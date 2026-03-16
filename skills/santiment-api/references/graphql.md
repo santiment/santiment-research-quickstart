@@ -88,6 +88,10 @@ df['datetime'] = pd.to_datetime(df['datetime'])
 df.set_index('datetime', inplace=True)
 ```
 
+### 2.1 Get Versioned Time Series Data (v2)
+
+Versioned queries are documented separately in [graphql-versioned-metrics.md](graphql-versioned-metrics.md).
+
 ### 3. Multi-Asset Batch Query (timeseriesDataPerSlug)
 
 Query the same metric for multiple assets in a single call:

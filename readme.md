@@ -88,6 +88,7 @@ print(df.head())
 - `examples/notebooks/client_demo_notebook.ipynb`: Interactive walkthrough
 - `case-studies/`: Research reports and analysis notes
 - `metrics-correlation/`: Correlation studies and generated outputs
+- `available-metrics.md`: Live inventory of currently available Santiment metric ids
 
 ## Notes
 
