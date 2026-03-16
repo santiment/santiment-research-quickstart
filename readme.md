@@ -1,82 +1,101 @@
 # Santiment Research Quickstart
 
-Welcome to the **Santiment Research Quickstart**. While this repository provides concise examples and best practices for using `sanpy`, its **primary feature** is the integration of AI Skills for seamless data retrieval.
+This repository is a practical starting point for working with Santiment data in Python. It includes runnable `sanpy` examples, research notes, and an AI skill for agent-based access to Santiment metrics.
 
-## AI Agent Skills
+## API Key Setup
 
-This repository comes equipped with specialized skills to help AI agents interact with the Santiment API effectively.
+Both workflows in this repository require a Santiment API key.
 
-### Available Skills
+1. Get your API key from the [Santiment account page](https://app.santiment.net/account).
+2. Copy `env.example` to `.env`.
+3. Replace the placeholder value with your key.
 
-*   **`santiment-api`**: The core skill for querying cryptocurrency and blockchain data.
-    *   **Capabilities**: Fetching price data, on-chain metrics (DAA, MVRV), social metrics (Volume, Sentiment), and development activity.
-    *   **Usage**: Agents can invoke this skill to execute complex data queries without manual script composition.
-    *   **Location**: [`skills/santiment-api/`](skills/santiment-api/)
+```bash
+cp env.example .env
+```
 
-## 💡 How to Use
+## Two Ways to Use This Repository
 
-Simply clone the repository to your local machine and interact with the Agent using natural language.
+There are two clear workflows in this repo:
+
+### If You Are Using an Agent
+
+Use the included `santiment-api` skill.
+
+This is the preferred path when an AI coding agent is working in the repository. The skill gives the agent a structured way to fetch price, on-chain, social, and development metrics without writing raw `sanpy` code for each request.
+
+Skill location:
+
+- [`skills/santiment-api/`](skills/santiment-api/)
+
+Typical setup:
 
 ```bash
 git clone https://github.com/santiment/santiment-research-quickstart.git
+cd santiment-research-quickstart
 ```
 
-Then, just tell the Agent: **"Install the santiment-api skill for me"**
+Simply text "Install the santiment-api skill."
 
-## Installation
+Then ask the agent in natural language, for example:
 
-You can install the required packages using pip:
+- "Use the `santiment-api` skill to fetch Bitcoin price data for the last 90 days."
+- "Compare daily active addresses for Ethereum and Solana."
+- "List available metrics for Chainlink."
+
+### If You Are Accessing Santiment Data Manually
+
+Use the scripts in `examples/` or write your own `sanpy` code directly.
+
+This path is better if you want direct control over the code, prefer working in notebooks, or want to learn the underlying `sanpy` API patterns yourself.
+
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
+cp env.example .env
 ```
 
-## Configuration
-
-To access full historical data and advanced metrics, a Santiment API key is required.
-[Get your API Key here](https://app.santiment.net/account).
-
-Configure your API key in your script:
-
-```python
-import san
-san.ApiConfig.api_key = "YOUR_API_KEY_HERE"
-```
-
-## Quick Start (Manual Usage)
-
-Fetch the daily price of Bitcoin:
+Example:
 
 ```python
 import san
 
-# Get daily price in USD for Bitcoin
-df = san.get("price_usd", slug="bitcoin", from_date="2024-01-01", to_date="utc_now", interval="1d")
+df = san.get(
+    "price_usd",
+    slug="bitcoin",
+    from_date="2024-01-01",
+    to_date="utc_now",
+    interval="1d",
+)
 
 print(df.head())
 ```
 
 ## Repository Structure
 
-*   **`skills/`**: **(Core)** Skills for AI agents to interact with the Santiment API.
-*   **`examples/`**: Scripts demonstrating key data fetching capabilities.
-    *   `01_get_price_data.py`: Basic OHLCV price data fetching.
-    *   `02_get_onchain_metrics.py`: On-chain metrics like MVRV and Daily Active Addresses.
-    *   `03_get_social_metrics.py`: Social data including Social Volume and Sentiment.
-    *   `04_get_dev_activity.py`: Tracking project development activity.
-    *   `05_get_many_assets.py`: Efficient batch processing for multiple assets.
-    *   `06_get_available_metrics.py`: Discovery of available metrics for specific assets.
-    *   `07_generate_correlation_matrix.py`: Generates correlation matrices between price and social metrics using log-returns.
-*   **`examples/notebooks/`**: Interactive Jupyter Notebooks.
-    *   `client_demo_notebook.ipynb`: Comprehensive walkthrough from data validation to alpha discovery.
-*   **`case-studies/`**: In-depth research reports and anomaly detection studies.
-    *   `research_reports.md`: Index of Santiment research reports.
-    *   `backtest_weighted_sentiment_dominance.md`: Backtesting strategy based on weighted sentiment.
-    *   `data-anomaly-evaluation/`: Statistical evaluation of data anomalies.
-*   **`metrics-correlation/`**: Analysis of correlations between different metrics.
-    *   `social-metrics/`: Analysis of correlation between price changes and social metrics (Volume, Dominance, Sentiment).
+- `skills/`: Skills for AI agents
+- `skills/santiment-api/`: Main skill for querying Santiment data
+- `examples/`: Runnable Python examples
+- `examples/01_get_price_data.py`: Basic price data retrieval
+- `examples/02_get_onchain_metrics.py`: On-chain metrics such as daily active addresses and MVRV
+- `examples/03_get_social_metrics.py`: Social volume and sentiment examples
+- `examples/04_get_dev_activity.py`: Development activity examples
+- `examples/05_get_many_assets.py`: Batch retrieval for multiple assets
+- `examples/06_get_available_metrics.py`: Metric discovery for assets
+- `examples/07_generate_correlation_matrix.py`: Correlation analysis between price and social metrics
+- `examples/notebooks/`: Jupyter notebooks
+- `examples/notebooks/client_demo_notebook.ipynb`: Interactive walkthrough
+- `case-studies/`: Research reports and analysis notes
+- `metrics-correlation/`: Correlation studies and generated outputs
 
-## Documentation
+## Notes
 
-*   [Official SanPy Documentation](https://github.com/santiment/sanpy)
-*   [Available Metrics Catalog](https://academy.santiment.net/metrics/)
+- If an agent is operating inside this repository, prefer the `santiment-api` skill instead of writing raw `sanpy` calls.
+- If you are working manually, the example scripts are the fastest way to get started.
+- This repository is for research and exploration, not production trading systems.
+
+## References
+
+- [SanPy documentation](https://github.com/santiment/sanpy)
+- [Santiment metrics catalog](https://academy.santiment.net/metrics/)
