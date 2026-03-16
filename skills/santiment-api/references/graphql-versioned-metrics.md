@@ -9,8 +9,9 @@ Use GraphQL versioned queries when:
 - the user explicitly asks for `v2`, `2.0`, or a specific metric version
 - the metric has multiple available versions
 - you need to confirm which version is exposed before fetching data
+- you need a custom GraphQL response shape beyond the default `san.get(...)` timeseries output
 
-Do not rely on `san.get(..., version="2.0")` for strict versioned access. Prefer `san.graphql.execute_gql(...)`.
+`san.get(..., version="2.0")` is supported in `sanpy 0.12.5+` for strict versioned access. Use GraphQL when you need metadata inspection or a custom query shape.
 
 ## Core Rule
 
@@ -125,5 +126,6 @@ Common mapping:
 ## Practical Notes
 
 - Validate `availableVersions` when version separation matters.
+- `san.get(metric, ..., version="2.0")` is the simplest manual path when you just need the default timeseries result.
 - Some custom text-query paths can still produce similar v1 and v2 results; verify if the distinction is important to the task.
 - Use `interval="1d"` by default unless the task explicitly needs intraday data.

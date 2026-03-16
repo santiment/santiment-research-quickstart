@@ -98,9 +98,12 @@ result = san.graphql.execute_gql("""
 """)
 ```
 
-### 5. Versioned Metrics (Use This for v2)
+### 5. Versioned Metrics
 
-If the task explicitly asks for `version="2.0"` data, use GraphQL.
+If the task explicitly asks for `version="2.0"` data, you can use either:
+
+- `san.get(..., version="2.0")` for normal timeseries access
+- GraphQL when you need metadata inspection or a custom response shape
 
 ```python
 import san
@@ -159,7 +162,8 @@ Rules for versioned metrics:
 
 - Use client-facing names like `social_volume_total` and `social_dominance_total`.
 - Put `version: "2.0"` on `getMetric(...)`, not on `timeseriesData(...)`.
-- Prefer `san.graphql.execute_gql(...)` over `san.get(..., version="2.0")`.
+- `san.get(..., version="2.0")` is supported in `sanpy 0.12.5+` for exact GraphQL version pinning.
+- Prefer GraphQL when you need `metadata.availableVersions` or a custom GraphQL response shape.
 - Validate `availableVersions` first when versioning matters.
 
 ### 6. SQL Access

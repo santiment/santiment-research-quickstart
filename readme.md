@@ -43,6 +43,14 @@ Then ask the agent in natural language, for example:
 - "Compare daily active addresses for Ethereum and Solana."
 - "List available metrics for Chainlink."
 
+For new version metrics, just ask the agent in plain language and specify the metric version you want.
+
+Example prompt:
+
+```text
+Fetch social_volume_total version 2.0 for bitcoin from utc_now-30d to utc_now with 1d interval.
+```
+
 ### If You Are Accessing Santiment Data Manually
 
 Use the scripts in `examples/` or write your own `sanpy` code directly.
@@ -71,6 +79,44 @@ df = san.get(
 
 print(df.head())
 ```
+
+For new version metrics in manual scripts, use `san.get(...)` with the new client-facing metric id and pass `version="2.0"` when you want an exact GraphQL metric version.
+
+Example:
+
+```python
+import san
+
+df = san.get(
+    "social_volume_total",
+    slug="bitcoin",
+    from_date="utc_now-30d",
+    to_date="utc_now",
+    interval="1d",
+    version="2.0",
+)
+
+print(df.head())
+```
+
+## Using New Version Metrics
+
+There are two recommended paths for new version metrics:
+
+- Agent workflow: use a query and set `version: "2.0"` on `getMetric(...)`.
+- Manual workflow: use `san.get(...)` with the new metric name and `version="2.0"` when you need an exact version.
+- This exact version pinning is supported in `sanpy 0.12.5+`, which is the version declared in this repository.
+- A raw query is still useful when you want custom GraphQL response shapes or metadata inspection.
+
+Examples of client-facing metric names:
+
+- `social_volume_total`
+- `social_dominance_total`
+
+Detailed reference:
+
+- [`skills/santiment-api/references/graphql-versioned-metrics.md`](skills/santiment-api/references/graphql-versioned-metrics.md)
+- [`skills/santiment-api/references/versioned-metrics-2.0-inventory.md`](skills/santiment-api/references/versioned-metrics-2.0-inventory.md)
 
 ## Repository Structure
 
