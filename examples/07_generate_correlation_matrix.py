@@ -1,8 +1,16 @@
+from pathlib import Path
+import sys
+
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+
+from scripts.bootstrap_sanpy import configure_san
 import san
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+configure_san()
 
 # Parameters
 ASSET = "solana"

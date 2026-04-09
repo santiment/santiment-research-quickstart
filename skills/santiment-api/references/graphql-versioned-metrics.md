@@ -2,16 +2,24 @@
 
 Use this reference when a task explicitly requires metric versions such as `version: "2.0"`.
 
+## Preferred Decision Order
+
+1. Try `san.get(..., version="2.0")` first when you only need the default timeseries output.
+2. Use GraphQL metadata when you need to confirm which versions exist.
+3. Use GraphQL timeseries queries only when you need a custom selector or a custom response shape.
+
 ## When to Use
 
 Use GraphQL versioned queries when:
 
-- the user explicitly asks for `v2`, `2.0`, or a specific metric version
 - the metric has multiple available versions
 - you need to confirm which version is exposed before fetching data
 - you need a custom GraphQL response shape beyond the default `san.get(...)` timeseries output
+- you need a selector that does not fit the standard `slug=...` path
 
-`san.get(..., version="2.0")` is supported in `sanpy 0.12.5+` for strict versioned access. Use GraphQL when you need metadata inspection or a custom query shape.
+Do not switch to GraphQL just because the user mentioned `2.0`.
+
+`san.get(..., version="2.0")` is supported in `sanpy 0.13.0`. Use GraphQL when you need metadata inspection or a custom query shape.
 
 ## Core Rule
 

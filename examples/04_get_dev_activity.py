@@ -1,4 +1,12 @@
+from pathlib import Path
+import sys
+
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+
+from scripts.bootstrap_sanpy import configure_san
 import san
+
+configure_san()
 
 # =========================================================
 # Example 4: Fetching Development Activity

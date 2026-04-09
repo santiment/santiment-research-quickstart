@@ -22,7 +22,7 @@ There are two clear workflows in this repo:
 
 Use the included `santiment-api` skill.
 
-This is the preferred path when an AI coding agent is working in the repository. The skill gives the agent a structured way to fetch price, on-chain, social, and development metrics without writing raw `sanpy` code for each request.
+This is the preferred path when an AI coding agent is working in the repository. The skill routes ordinary requests toward `san.get(...)` and `san.get_many(...)`, keeps `version="2.0"` on the normal timeseries path when possible, and only falls back to GraphQL or SQL when the task actually requires them.
 
 Skill location:
 
@@ -35,7 +35,7 @@ git clone https://github.com/santiment/santiment-research-quickstart.git
 cd santiment-research-quickstart
 ```
 
-Simply text "Install the santiment-api skill."
+Then tell the agent to use the `santiment-api` skill.
 
 Then ask the agent in natural language, for example:
 
@@ -43,7 +43,7 @@ Then ask the agent in natural language, for example:
 - "Compare daily active addresses for Ethereum and Solana."
 - "List available metrics for Chainlink."
 
-For new version metrics, just ask the agent in plain language and specify the metric version you want.
+For versioned metrics, just ask for the metric and version you want. The default agent path should still be `san.get(..., version="2.0")` when the normal timeseries output is enough.
 
 Example prompt:
 
@@ -64,10 +64,20 @@ pip install -r requirements.txt
 cp env.example .env
 ```
 
+The examples reuse a shared bootstrap helper in `scripts/bootstrap_sanpy.py`, which reads `SAN_API_KEY` from the environment or the repository `.env` file.
+
 Example:
 
 ```python
+from pathlib import Path
+import sys
+
+sys.path.append(str(Path.cwd()))
+
+from scripts.bootstrap_sanpy import configure_san
 import san
+
+configure_san()
 
 df = san.get(
     "price_usd",
@@ -80,7 +90,7 @@ df = san.get(
 print(df.head())
 ```
 
-For new version metrics in manual scripts, use `san.get(...)` with the new client-facing metric id and pass `version="2.0"` when you want an exact GraphQL metric version.
+For versioned metrics in manual scripts, use `san.get(...)` with the client-facing metric id and pass `version="2.0"` when you want an exact version while keeping the default timeseries output.
 
 Example:
 
@@ -101,12 +111,11 @@ print(df.head())
 
 ## Using New Version Metrics
 
-There are two recommended paths for new version metrics:
+There are two recommended paths for versioned metrics:
 
-- Agent workflow: use a query and set `version: "2.0"` on `getMetric(...)`.
-- Manual workflow: use `san.get(...)` with the new metric name and `version="2.0"` when you need an exact version.
-- This exact version pinning is supported in `sanpy 0.12.5+`, which is the version declared in this repository.
-- A raw query is still useful when you want custom GraphQL response shapes or metadata inspection.
+- Default path: use `san.get(...)` with `version="2.0"` when the ordinary timeseries output is enough.
+- GraphQL path: use raw GraphQL only when you need metadata inspection, a custom selector, or a custom response shape.
+- This exact version pinning is supported in `sanpy 0.13.0`, which is the version declared in this repository.
 
 Examples of client-facing metric names:
 
@@ -123,6 +132,7 @@ Detailed reference:
 - `skills/`: Skills for AI agents
 - `skills/santiment-api/`: Main skill for querying Santiment data
 - `examples/`: Runnable Python examples
+- `scripts/bootstrap_sanpy.py`: Shared bootstrap helper for API authentication
 - `examples/01_get_price_data.py`: Basic price data retrieval
 - `examples/02_get_onchain_metrics.py`: On-chain metrics such as daily active addresses and MVRV
 - `examples/03_get_social_metrics.py`: Social volume and sentiment examples
@@ -139,7 +149,7 @@ Detailed reference:
 ## Notes
 
 - If an agent is operating inside this repository, prefer the `santiment-api` skill instead of writing raw `sanpy` calls.
-- If you are working manually, the example scripts are the fastest way to get started.
+- If you are working manually, start from the closest script in `examples/` before inventing a new pattern.
 - This repository is for research and exploration, not production trading systems.
 
 ## References
