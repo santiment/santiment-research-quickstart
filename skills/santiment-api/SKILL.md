@@ -11,7 +11,6 @@ Use this skill when you need Santiment market, on-chain, social, or development 
 
 - The repository must already be installed with `pip install -r requirements.txt`.
 - The Santiment API key must be available via `SAN_API_KEY`.
-- Reuse the repository bootstrap helper in `scripts/bootstrap_sanpy.py` instead of redefining API auth in each script.
 
 ## Decision Order
 
@@ -73,15 +72,7 @@ Only move to raw GraphQL or SQL when the examples and routing rules say the norm
 ### Standard Timeseries
 
 ```python
-from pathlib import Path
-import sys
-
-sys.path.append(str(Path(__file__).resolve().parents[1]))
-
-from scripts.bootstrap_sanpy import configure_san
 import san
-
-configure_san()
 
 df = san.get(
     "daily_active_addresses",
@@ -95,15 +86,7 @@ df = san.get(
 ### Many Assets
 
 ```python
-from pathlib import Path
-import sys
-
-sys.path.append(str(Path(__file__).resolve().parents[1]))
-
-from scripts.bootstrap_sanpy import configure_san
 import san
-
-configure_san()
 
 df = san.get_many(
     "price_usd",
@@ -117,15 +100,7 @@ df = san.get_many(
 ### Versioned Standard Timeseries
 
 ```python
-from pathlib import Path
-import sys
-
-sys.path.append(str(Path(__file__).resolve().parents[1]))
-
-from scripts.bootstrap_sanpy import configure_san
 import san
-
-configure_san()
 
 df = san.get(
     "social_volume_total",
@@ -140,15 +115,7 @@ df = san.get(
 ### GraphQL Metadata Inspection
 
 ```python
-from pathlib import Path
-import sys
-
-sys.path.append(str(Path(__file__).resolve().parents[1]))
-
-from scripts.bootstrap_sanpy import configure_san
 import san
-
-configure_san()
 
 meta = san.graphql.execute_gql("""
 {
@@ -165,15 +132,7 @@ meta = san.graphql.execute_gql("""
 ### GraphQL Custom Selector
 
 ```python
-from pathlib import Path
-import sys
-
-sys.path.append(str(Path(__file__).resolve().parents[1]))
-
-from scripts.bootstrap_sanpy import configure_san
 import san
-
-configure_san()
 
 result = san.graphql.execute_gql("""
 {
@@ -195,15 +154,7 @@ result = san.graphql.execute_gql("""
 ### SQL Only When Explicitly Needed
 
 ```python
-from pathlib import Path
-import sys
-
-sys.path.append(str(Path(__file__).resolve().parents[1]))
-
-from scripts.bootstrap_sanpy import configure_san
 import san
-
-configure_san()
 
 df = san.execute_sql(
     query="""

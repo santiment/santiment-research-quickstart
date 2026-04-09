@@ -64,20 +64,10 @@ pip install -r requirements.txt
 cp env.example .env
 ```
 
-The examples reuse a shared bootstrap helper in `scripts/bootstrap_sanpy.py`, which reads `SAN_API_KEY` from the environment or the repository `.env` file.
-
 Example:
 
 ```python
-from pathlib import Path
-import sys
-
-sys.path.append(str(Path.cwd()))
-
-from scripts.bootstrap_sanpy import configure_san
 import san
-
-configure_san()
 
 df = san.get(
     "price_usd",
@@ -132,7 +122,6 @@ Detailed reference:
 - `skills/`: Skills for AI agents
 - `skills/santiment-api/`: Main skill for querying Santiment data
 - `examples/`: Runnable Python examples
-- `scripts/bootstrap_sanpy.py`: Shared bootstrap helper for API authentication
 - `examples/01_get_price_data.py`: Basic price data retrieval
 - `examples/02_get_onchain_metrics.py`: On-chain metrics such as daily active addresses and MVRV
 - `examples/03_get_social_metrics.py`: Social volume and sentiment examples

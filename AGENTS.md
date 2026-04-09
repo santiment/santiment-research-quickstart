@@ -56,12 +56,8 @@ santiment-research-quickstart/
 │       └── *.png                 # Generated visualizations
 ├── skills/                       # Skills for AI agents
 │   └── santiment-api/            # Santiment API interaction skill
-├── scripts/
-│   └── bootstrap_sanpy.py        # Shared API auth/bootstrap helper
 ├── requirements.txt              # Python dependencies
 ├── .env                          # API key storage (gitignored)
-├── tests/
-│   └── test_bootstrap_sanpy.py   # Bootstrap helper tests
 └── readme.md                     # Project documentation
 ```
 
@@ -78,8 +74,6 @@ Use a single repository convention:
 ```bash
 SAN_API_KEY=your_api_key_here
 ```
-
-The shared bootstrap helper in `scripts/bootstrap_sanpy.py` reads `SAN_API_KEY` from the environment or the repository `.env` file and configures `sanpy`.
 
 **Important:** The `.env` file is already gitignored. Never commit API keys.
 
@@ -120,7 +114,6 @@ jupyter notebook examples/notebooks/
 - **Skill Usage:** Invoke the `santiment-api` skill to fetch price, social metrics, on-chain data, etc.
 - **Reference:** See `skills/santiment-api/` for implementation details (but simply call the skill).
 - **Examples First:** Before writing new code, inspect the closest script in `examples/` and adapt that pattern.
-- **Bootstrap:** Reuse `scripts/bootstrap_sanpy.py` instead of redefining API auth in each script.
 
 ### Common Metrics Reference
 
@@ -164,8 +157,7 @@ See `metrics-correlation/social-metrics/correlation-levels-vs-changes.md` for de
 When modifying code:
 1. Run affected example scripts to verify they still work
 2. Check that API responses return expected data
-3. Run focused local tests for helper code when adding repository utilities
-4. Verify data transformations produce valid results
+3. Verify data transformations produce valid results
 
 ---
 
