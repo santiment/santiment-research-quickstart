@@ -21,7 +21,7 @@ This is a **Python research repository** demonstrating how to use `sanpy`, the o
 
 | Component | Version | Purpose |
 |-----------|---------|---------|
-| `sanpy` | 0.12.3 | Official Santiment Python API client |
+| `sanpy` | 0.13.0 | Official Santiment Python API client |
 | `pandas` | 2.0.3 | Data manipulation and analysis |
 | `numpy` | 1.24.3 | Numerical computing |
 | `matplotlib` | 3.7.2 | Data visualization |
@@ -67,18 +67,12 @@ santiment-research-quickstart/
 
 ### API Key Setup
 
-The project requires a Santiment API key for full data access. The key is configured via environment variables or directly in code:
+The project requires a Santiment API key for full data access.
 
-**Method 1: Environment Variable (Recommended)**
+Use a single repository convention:
+
 ```bash
-# Set in .env file (already present, do NOT commit)
 SAN_API_KEY=your_api_key_here
-```
-
-**Method 2: Inline Configuration**
-```python
-import san
-san.ApiConfig.api_key = "YOUR_API_KEY_HERE"
 ```
 
 **Important:** The `.env` file is already gitignored. Never commit API keys.
@@ -115,10 +109,11 @@ jupyter notebook examples/notebooks/
 
 ### Data Access
 
-**Important:** When you need to fetch data from the Santiment API, **DO NOT** write raw `sanpy` code or scripts. Instead, use the provided **skills** (e.g., `santiment-api`).
+**Important:** When you need to fetch data from the Santiment API, **DO NOT** write raw `sanpy` code or scripts first. Instead, use the provided **skills** (e.g., `santiment-api`) and follow their routing rules.
 
 - **Skill Usage:** Invoke the `santiment-api` skill to fetch price, social metrics, on-chain data, etc.
 - **Reference:** See `skills/santiment-api/` for implementation details (but simply call the skill).
+- **Examples First:** Before writing new code, inspect the closest script in `examples/` and adapt that pattern.
 
 ### Common Metrics Reference
 

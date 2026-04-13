@@ -1,48 +1,75 @@
 ---
 name: santiment-api
-description: Query and fetch cryptocurrency and blockchain data using Santiment GraphQL API via sanpy library. Use when you need price, on-chain, social, development, or other crypto metrics. Supports single metrics, multi-asset queries, batching, SQL, raw GraphQL, and versioned metrics such as social v2.0.
+description: Fetch Santiment crypto metrics with stable defaults. Prefer san.get and san.get_many. Use GraphQL only for metadata inspection, custom selectors, or custom response shapes.
 ---
 
 # Santiment API
 
 Use this skill when you need Santiment market, on-chain, social, or development data in Python.
 
-## Setup
+## Preconditions
 
-Install:
+- The repository must already be installed with `pip install -r requirements.txt`.
+- The Santiment API key must be available via `SAN_API_KEY`.
 
-```bash
-pip install sanpy==0.12.3
-```
+## Decision Order
 
-Configure an API key before querying:
+1. Prefer `san.get(...)` for ordinary single-series retrieval.
+2. Prefer `san.get_many(...)` for one metric across many slugs.
+3. Prefer `san.get(..., version="2.0")` for versioned timeseries when the default output is enough.
+4. Use GraphQL only for metadata inspection, custom selectors, or custom response shapes.
+5. Use SQL only when explicitly required.
 
-```python
-import san
+## Routing Rules
 
-# Repo-local convention
-# .env -> SAN_API_KEY=...
+### Rule 1
 
-# sanpy environment variable
-# export SANPY_APIKEY="your_api_key"
+Single metric + single asset + ordinary timeseries -> `san.get(...)`
 
-# Fallback
-san.ApiConfig.api_key = "your_api_key"
-```
+### Rule 2
 
-Get an API key from [Santiment Account](https://app.santiment.net/account).
+Single metric + many assets -> `san.get_many(...)`
 
-## Choose the Right Access Pattern
+### Rule 3
 
-- Use `san.get(...)` for one metric on one asset.
-- Use `san.get_many(...)` for one metric across multiple assets.
-- Use `AsyncBatch` for multiple independent queries.
-- Use `san.graphql.execute_gql(...)` for versioned metrics, custom selectors, or custom shapes.
-- Use `san.execute_sql(...)` only when you explicitly need ClickHouse-style SQL access.
+If the request explicitly asks for `2.0` and still wants the normal timeseries result -> `san.get(..., version="2.0")`
 
-## Core Patterns
+Do not jump to GraphQL just because the request mentions `2.0`.
 
-### 1. Single Metric
+### Rule 4
+
+Only use GraphQL when at least one of these is true:
+
+- you need `metadata.availableVersions`
+- you need a custom response shape
+- the selector is more complex than a plain `slug=...`
+- you need GraphQL-only fields
+
+### Rule 5
+
+Only use `san.execute_sql(...)` when the user explicitly asks for SQL or the task clearly requires ClickHouse-style querying.
+
+## Defaults
+
+- Use `slug` unless the task clearly requires a selector.
+- Default to `interval="1d"` unless the task explicitly needs intraday data.
+- Use relative dates like `utc_now-30d` for exploratory requests.
+- Before writing new code, inspect the closest example in `examples/`.
+- Prefer adapting an existing example over inventing a new pattern.
+
+## Example Selection
+
+- Ordinary single-asset series -> start from `examples/01_get_price_data.py`
+- On-chain single-asset series -> start from `examples/02_get_onchain_metrics.py`
+- Social single-asset series -> start from `examples/03_get_social_metrics.py`
+- Multi-asset single metric -> start from `examples/05_get_many_assets.py`
+- Metric discovery -> start from `examples/06_get_available_metrics.py`
+
+Only move to raw GraphQL or SQL when the examples and routing rules say the normal path is not enough.
+
+## Minimal Patterns
+
+### Standard Timeseries
 
 ```python
 import san
@@ -50,60 +77,42 @@ import san
 df = san.get(
     "daily_active_addresses",
     slug="ethereum",
-    from_date="2024-01-01",
-    to_date="2024-02-01",
+    from_date="utc_now-30d",
+    to_date="utc_now",
     interval="1d",
 )
 ```
 
-### 2. Multiple Assets
-
-```python
-df = san.get_many(
-    "price_usd",
-    slugs=["bitcoin", "ethereum", "solana"],
-    from_date="2024-01-01",
-    to_date="2024-02-01",
-    interval="1d",
-)
-```
-
-### 3. Batch Queries
-
-```python
-from san import AsyncBatch
-
-batch = AsyncBatch()
-batch.get("price_usd", slug="bitcoin", from_date="2024-01-01", to_date="2024-02-01")
-batch.get("daily_active_addresses", slug="ethereum", from_date="2024-01-01", to_date="2024-02-01")
-
-btc_price, eth_daa = batch.execute(max_workers=10)
-```
-
-### 4. Raw GraphQL
+### Many Assets
 
 ```python
 import san
 
-result = san.graphql.execute_gql("""
-{
-  projectBySlug(slug: "bitcoin") {
-    slug
-    name
-    ticker
-    priceUsd
-    marketcapUsd
-  }
-}
-""")
+df = san.get_many(
+    "price_usd",
+    slugs=["bitcoin", "ethereum", "solana"],
+    from_date="utc_now-30d",
+    to_date="utc_now",
+    interval="1d",
+)
 ```
 
-### 5. Versioned Metrics
+### Versioned Standard Timeseries
 
-If the task explicitly asks for `version="2.0"` data, you can use either:
+```python
+import san
 
-- `san.get(..., version="2.0")` for normal timeseries access
-- GraphQL when you need metadata inspection or a custom response shape
+df = san.get(
+    "social_volume_total",
+    slug="bitcoin",
+    from_date="utc_now-30d",
+    to_date="utc_now",
+    interval="1d",
+    version="2.0",
+)
+```
+
+### GraphQL Metadata Inspection
 
 ```python
 import san
@@ -118,34 +127,18 @@ meta = san.graphql.execute_gql("""
   }
 }
 """)
-
-print(meta["getMetric"]["metadata"])
 ```
+
+### GraphQL Custom Selector
 
 ```python
 import san
 
-social_volume_v2 = san.graphql.execute_gql("""
+result = san.graphql.execute_gql("""
 {
-  getMetric(metric: "social_volume_total", version: "2.0") {
+  getMetric(metric: "price_usd") {
     timeseriesData(
-      slug: "bitcoin"
-      from: "utc_now-30d"
-      to: "utc_now"
-      interval: "1d"
-    ) {
-      datetime
-      value
-    }
-  }
-}
-""")
-
-social_dominance_v2 = san.graphql.execute_gql("""
-{
-  getMetric(metric: "social_dominance_total", version: "2.0") {
-    timeseriesData(
-      slug: "bitcoin"
+      selector: {slugs: ["bitcoin", "ethereum", "solana"]}
       from: "utc_now-30d"
       to: "utc_now"
       interval: "1d"
@@ -158,17 +151,11 @@ social_dominance_v2 = san.graphql.execute_gql("""
 """)
 ```
 
-Rules for versioned metrics:
-
-- Use client-facing names like `social_volume_total` and `social_dominance_total`.
-- Put `version: "2.0"` on `getMetric(...)`, not on `timeseriesData(...)`.
-- `san.get(..., version="2.0")` is supported in `sanpy 0.12.5+` for exact GraphQL version pinning.
-- Prefer GraphQL when you need `metadata.availableVersions` or a custom GraphQL response shape.
-- Validate `availableVersions` first when versioning matters.
-
-### 6. SQL Access
+### SQL Only When Explicitly Needed
 
 ```python
+import san
+
 df = san.execute_sql(
     query="""
     SELECT
@@ -188,7 +175,7 @@ df = san.execute_sql(
 )
 ```
 
-## Common Discovery Helpers
+## Common Helpers
 
 ```python
 import san
@@ -198,20 +185,17 @@ btc_metrics = san.available_metrics_for_slug("bitcoin")
 since = san.available_metric_for_slug_since("daily_active_addresses", "bitcoin")
 ```
 
-## Practical Defaults
+## Do Not
 
-- Use `slug` for normal asset queries.
-- Use `selector` only when the metric needs a contract, organization, label, or other custom target.
-- Use `interval="1d"` unless the task explicitly needs higher frequency.
-- Use relative dates like `utc_now-30d` for quick exploratory queries.
-- Keep the main skill lightweight; use the references for long-tail patterns.
+- Do not mix multiple auth styles inside generated code.
+- Do not default to raw GraphQL for simple timeseries.
+- Do not default to GraphQL just because the request mentions `2.0`.
+- Do not use SQL unless the task explicitly needs it.
 
 ## References
 
-- [references/graphql-versioned-metrics.md](references/graphql-versioned-metrics.md): versioned metrics such as social v2.0
-- [references/versioned-metrics-2.0-recommended.md](references/versioned-metrics-2.0-recommended.md): recommended client-facing metric names with `2.0`
+- [references/graphql-versioned-metrics.md](references/graphql-versioned-metrics.md): when version inspection or custom versioned GraphQL is actually needed
 - [references/versioned-metrics-2.0-inventory.md](references/versioned-metrics-2.0-inventory.md): live-verified inventory of metric names exposing `2.0`
-- [references/graphql.md](references/graphql.md): general GraphQL patterns, selectors, and metadata
-- [references/exploration.md](references/exploration.md): metric discovery and exploration workflow
+- [references/graphql.md](references/graphql.md): GraphQL-only patterns
+- [references/exploration.md](references/exploration.md): metric discovery workflow
 - [references/demo-ideas.md](references/demo-ideas.md): reusable analysis ideas
-- [Santiment Academy](https://academy.santiment.net/)
