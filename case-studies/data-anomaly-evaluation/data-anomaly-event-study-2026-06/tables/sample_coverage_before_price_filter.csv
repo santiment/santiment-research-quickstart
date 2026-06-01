@@ -1,0 +1,5 @@
+data_anomaly,display,source_events,source_assets,events_after_binance_filter,assets_after_binance_filter,min_events_per_asset
+eth_whale_dump,ETH Whale Dump,87,1,87,1,1
+price_network_activity_divergence,Price/Network Activity Divergence,22431,1427,257,22,5
+project_in_trends,Project in Trends,1274,150,805,18,5
+social_dev_score,Social Dev Score,213,71,66,11,2
