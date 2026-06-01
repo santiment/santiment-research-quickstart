@@ -1,0 +1,30 @@
+{
+  "analysis_date": "2026-05-28",
+  "start_date": "2023-01-01 00:00:00",
+  "end_date": "2026-05-28 00:00:00",
+  "target_anomalies": [
+    "social_dev_score",
+    "eth_whale_dump",
+    "price_network_activity_divergence",
+    "project_in_trends"
+  ],
+  "asset_filter": "Mapped Binance spot USDT markets only",
+  "windows_hours": [
+    1,
+    4,
+    24,
+    72
+  ],
+  "control_ratio": 10,
+  "random_seed": 20260528,
+  "min_asset_events": {
+    "social_dev_score": 2,
+    "eth_whale_dump": 1,
+    "price_network_activity_divergence": 5,
+    "project_in_trends": 5
+  },
+  "price_source": "Binance spot USDT hourly close through anomaly_evaluation.fetching.BinanceDataFetcher",
+  "event_metrics_rows": 4839,
+  "control_metrics_rows": 48390,
+  "primary_results_rows": 48
+}
